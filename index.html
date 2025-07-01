@@ -1,551 +1,594 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
+
+<html lang="pt-BR" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Burnverso - Portal de Ferramentas</title>
+    <title>Hub de Desenvolvimento XR</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        :root {
+            --primary-bg: #f8fafc; /* slate-50 */
+            --secondary-bg: #ffffff;
+            --text-primary: #1e293b; /* slate-800 */
+            --text-secondary: #475569; /* slate-600 */
+            --accent: #0f766e; /* teal-700 */
+            --accent-light: #ccfbf1; /* teal-50 */
+            --border-color: #e2e8f0; /* slate-200 */
         }
-
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background-color: #f8f9fa;
-            display: flex;
-            min-height: 100vh;
+            background-color: var(--primary-bg);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
         }
-
-        /* Sidebar */
-        .sidebar {
-            width: 280px;
-            background: #2c3e50;
-            color: white;
-            padding: 2rem 0;
-            position: fixed;
-            height: 100vh;
-            overflow-y: auto;
-            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
-        }
-
-        .sidebar-header {
-            padding: 0 1.5rem 2rem 1.5rem;
-            border-bottom: 1px solid #34495e;
-            margin-bottom: 2rem;
-        }
-
-        .sidebar-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-
-        .sidebar-subtitle {
-            font-size: 0.9rem;
-            color: #bdc3c7;
-            opacity: 0.8;
-        }
-
-        .nav-section {
-            margin-bottom: 2rem;
-        }
-
-        .nav-section-title {
-            padding: 0 1.5rem;
-            font-size: 0.8rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: #95a5a6;
-            margin-bottom: 1rem;
-        }
-
-        .nav-item {
-            display: block;
-            color: #ecf0f1;
-            text-decoration: none;
-            padding: 0.75rem 1.5rem;
-            transition: all 0.2s ease;
+        .nav-link {
+            transition: all 0.2s ease-in-out;
             border-left: 3px solid transparent;
-            position: relative;
         }
-
-        .nav-item:hover {
-            background-color: #34495e;
-            border-left-color: #3498db;
+        .nav-link.active {
+            color: var(--accent);
+            border-left-color: var(--accent);
+            background-color: var(--accent-light);
         }
-
-        .nav-item.active {
-            background-color: #34495e;
-            border-left-color: #3498db;
-            font-weight: 500;
-        }
-
-        .nav-item-icon {
-            display: inline-block;
-            width: 20px;
-            margin-right: 0.75rem;
-        }
-
-        .nav-badge {
-            background: #e74c3c;
-            color: white;
-            font-size: 0.7rem;
-            padding: 2px 6px;
-            border-radius: 10px;
-            float: right;
-            margin-top: 2px;
-        }
-
-        .nav-badge.success {
-            background: #27ae60;
-        }
-
-        .nav-badge.warning {
-            background: #f39c12;
-        }
-
-        /* Main Content */
-        .main-content {
-            margin-left: 280px;
-            flex: 1;
-            padding: 2rem;
-        }
-
-        .content-header {
-            background: white;
-            padding: 2rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            margin-bottom: 2rem;
-        }
-
-        .content-title {
-            font-size: 2rem;
-            font-weight: 600;
-            color: #2c3e50;
-            margin-bottom: 0.5rem;
-        }
-
-        .content-subtitle {
-            color: #6c757d;
-            font-size: 1.1rem;
-        }
-
-        .section {
-            background: white;
-            padding: 2rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            margin-bottom: 2rem;
-            display: none;
-        }
-
-        .section.active {
-            display: block;
-        }
-
-        .section h2 {
-            color: #2c3e50;
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
+        .prose-custom h2 {
+            font-size: 1.875rem;
+            line-height: 2.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            border-bottom: 2px solid var(--border-color);
             padding-bottom: 0.5rem;
-            border-bottom: 2px solid #3498db;
+            margin-bottom: 1.5rem;
+            margin-top: 2rem;
         }
-
-        .section h3 {
-            color: #34495e;
-            font-size: 1.2rem;
-            margin: 1.5rem 0 1rem 0;
-        }
-
-        .tool-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-            margin: 2rem 0;
-        }
-
-        .tool-card {
-            border: 1px solid #dee2e6;
-            border-radius: 8px;
-            padding: 1.5rem;
-            transition: all 0.2s ease;
-            position: relative;
-        }
-
-        .tool-card:hover {
-            border-color: #3498db;
-            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.1);
-        }
-
-        .tool-status {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            padding: 0.25rem 0.75rem;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: 500;
-            text-transform: uppercase;
-        }
-
-        .status-active {
-            background-color: #d4edda;
-            color: #155724;
-        }
-
-        .status-development {
-            background-color: #fff3cd;
-            color: #856404;
-        }
-
-        .tool-title {
-            font-size: 1.2rem;
+        .prose-custom h3 {
+            font-size: 1.5rem;
+            line-height: 2rem;
             font-weight: 600;
-            color: #2c3e50;
-            margin-bottom: 0.75rem;
-        }
-
-        .tool-description {
-            color: #6c757d;
-            font-size: 0.9rem;
+            color: var(--text-primary);
+            margin-top: 2rem;
             margin-bottom: 1rem;
         }
-
-        .tool-actions {
-            display: flex;
-            gap: 0.75rem;
+        .prose-custom p, .prose-custom li {
+            color: var(--text-secondary);
+            line-height: 1.75;
         }
-
-        .btn {
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            text-decoration: none;
-            font-size: 0.85rem;
-            font-weight: 500;
-            transition: all 0.2s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
+        .prose-custom code {
+            background-color: #f1f5f9; /* slate-100 */
+            color: var(--accent);
+            padding: 0.2rem 0.4rem;
+            border-radius: 0.25rem;
+            font-size: 0.9em;
         }
-
-        .btn-primary {
-            background-color: #3498db;
-            color: white;
-            border: 1px solid #3498db;
-        }
-
-        .btn-primary:hover {
-            background-color: #2980b9;
-        }
-
-        .btn-secondary {
-            background-color: white;
-            color: #6c757d;
-            border: 1px solid #dee2e6;
-        }
-
-        .btn-secondary:hover {
-            background-color: #f8f9fa;
-        }
-
-        .info-box {
-            background: #f8f9fa;
-            border-left: 4px solid #3498db;
+        .prose-custom pre {
+            background-color: #0f172a; /* slate-900 */
+            color: #e2e8f0; /* slate-200 */
             padding: 1rem;
-            margin: 1rem 0;
+            border-radius: 0.5rem;
+            overflow-x: auto;
         }
-
-        .info-box h4 {
-            color: #2c3e50;
-            margin-bottom: 0.5rem;
+        .custom-card {
+            background-color: var(--secondary-bg);
+            border-radius: 0.75rem;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            padding: 1.5rem;
         }
-
-        .add-tool-section {
-            border: 2px dashed #dee2e6;
-            padding: 2rem;
-            text-align: center;
-            border-radius: 8px;
-            background: #f8f9fa;
+        .flow-arrow {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-
-        .add-icon {
+        .flow-arrow::after {
+            content: '→';
             font-size: 2rem;
-            color: #6c757d;
-            margin-bottom: 1rem;
-        }
-
-        /* Mobile Responsiveness */
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-                transition: transform 0.3s ease;
-                z-index: 1000;
-            }
-
-            .sidebar.mobile-open {
-                transform: translateX(0);
-            }
-
-            .main-content {
-                margin-left: 0;
-                width: 100%;
-            }
-
-            .mobile-toggle {
-                display: block;
-                background: #3498db;
-                color: white;
-                border: none;
-                padding: 0.75rem;
-                border-radius: 4px;
-                margin-bottom: 1rem;
-            }
-
-            .content-header {
-                padding: 1.5rem;
-            }
-
-            .content-title {
-                font-size: 1.5rem;
-            }
-        }
-
-        .mobile-toggle {
-            display: none;
+            color: var(--text-secondary);
+            margin: 0 1rem;
         }
     </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
-<body>
+<body class="antialiased">
+
+<div class="relative min-h-screen md:flex">
     <!-- Sidebar -->
-    <nav class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <div class="sidebar-title">Burnverso</div>
-            <div class="sidebar-subtitle">Portal de Ferramentas</div>
-        </div>
+    <aside id="sidebar" class="bg-white text-blue-100 w-64 space-y-6 py-7 px-2 absolute inset-y-0 left-0 transform -translate-x-full md:relative md:translate-x-0 transition duration-200 ease-in-out z-30 border-r border-slate-200">
+        <a href="#homepage-hero" class="text-slate-800 flex items-center space-x-2 px-4">
+            <svg class="w-8 h-8 text-teal-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+            <span class="text-xl font-extrabold">Hub de Desenvolvimento XR</span>
+        </a>
 
-        <div class="nav-section">
-            <div class="nav-section-title">Navegação</div>
-            <a href="#" class="nav-item active" onclick="showSection('home')">
-                <span class="nav-item-icon">🏠</span>
-                Início
-            </a>
-            <a href="#" class="nav-item" onclick="showSection('tools')">
-                <span class="nav-item-icon">🔧</span>
-                Ferramentas
-                <span class="nav-badge success">1</span>
-            </a>
-            <a href="#" class="nav-item" onclick="showSection('development')">
-                <span class="nav-item-icon">⚙️</span>
-                Em Desenvolvimento
-                <span class="nav-badge warning">2</span>
-            </a>
-        </div>
+        <nav id="nav-menu" class="text-slate-600 font-semibold">
+            <a href="#homepage-hero" class="nav-link block py-2.5 px-4 rounded">Início</a>
+            <a href="#intro" class="nav-link block py-2.5 px-4 rounded">Guia de Permissões</a>
+            <a href="#why" class="nav-link block py-2.5 px-4 rounded ml-4">Por que Gerenciar?</a>
+            <a href="#how" class="nav-link block py-2.5 px-4 rounded ml-4">Como Funciona</a>
+            <a href="#identify" class="nav-link block py-2.5 px-4 rounded ml-4">Identificar Permissões</a>
+            <a href="#remove" class="nav-link block py-2.5 px-4 rounded ml-4">Remover Permissões</a>
+            <a href="#policies" class="nav-link block py-2.5 px-4 rounded ml-4">Políticas da Meta</a>
+            <a href="#troubleshooting" class="nav-link block py-2.5 px-4 rounded ml-4">Solução de Problemas</a>
+            <a href="#new-content-hub" class="nav-link block py-2.5 px-4 rounded">Mais Recursos</a>
+        </nav>
+    </aside>
+    
+    <!-- Mobile menu button -->
+    <button id="mobile-menu-button" class="md:hidden fixed top-4 left-4 z-40 bg-white p-2 rounded-md shadow-lg">
+        <svg class="h-6 w-6 text-slate-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+        </svg>
+    </button>
 
-        <div class="nav-section">
-            <div class="nav-section-title">Aplicações Ativas</div>
-            <a href="https://dashlucas.github.io/Burnverso/#troubleshooting" class="nav-item" target="_blank">
-                <span class="nav-item-icon">📱</span>
-                Android Permissions
-            </a>
-        </div>
+    <!-- Content -->
+    <main class="flex-1 p-4 sm:p-6 lg:p-10 prose-custom max-w-full">
 
-        <div class="nav-section">
-            <div class="nav-section-title">Recursos</div>
-            <a href="#" class="nav-item" onclick="showSection('docs')">
-                <span class="nav-item-icon">📚</span>
-                Documentação
-            </a>
-            <a href="#" class="nav-item" onclick="showSection('add-tool')">
-                <span class="nav-item-icon">➕</span>
-                Adicionar Ferramenta
-            </a>
-        </div>
-    </nav>
-
-    <!-- Main Content -->
-    <div class="main-content">
-        <button class="mobile-toggle" onclick="toggleSidebar()">☰ Menu</button>
-
-        <div class="content-header">
-            <h1 class="content-title">Portal de Ferramentas</h1>
-            <p class="content-subtitle">Centro de desenvolvimento e ferramentas técnicas para projetos especializados</p>
-        </div>
-
-        <!-- Home Section -->
-        <div id="home" class="section active">
-            <h2>Bem-vindo ao Burnverso</h2>
-            <p>Este portal centraliza ferramentas e aplicações desenvolvidas para resolver problemas específicos em desenvolvimento de software, com foco especial em Unreal Engine, Android e Meta Quest.</p>
-
-            <div class="info-box">
-                <h4>Objetivo do Portal</h4>
-                <p>Fornecer soluções técnicas práticas e documentação detalhada para desenvolvedores que enfrentam desafios similares aos que encontrei em meus projetos.</p>
+        <!-- NEW HOMEPAGE HERO SECTION -->
+        <section id="homepage-hero" class="bg-gradient-to-r from-teal-600 to-teal-800 text-white p-8 sm:p-12 lg:p-16 rounded-xl shadow-lg mb-8 text-center">
+            <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold mb-4">Bem-vindo ao Seu Hub de Desenvolvimento XR!</h1>
+            <p class="text-lg sm:text-xl mb-6 max-w-3xl mx-auto">
+                Explore guias detalhados, ferramentas interativas e recursos essenciais para impulsionar seus projetos de Realidade Estendida.
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <a href="#intro" class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-teal-800 bg-white hover:bg-teal-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white">
+                    Acessar Guia de Permissões
+                </a>
+                <a href="#new-content-hub" class="inline-flex items-center justify-center px-6 py-3 border border-white text-base font-medium rounded-md text-white hover:bg-white hover:text-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white">
+                    Explorar Mais Recursos
+                </a>
             </div>
+        </section>
+        <!-- END NEW HOMEPAGE HERO SECTION -->
 
-            <h3>Estatísticas</h3>
-            <div class="tool-grid">
-                <div class="tool-card">
-                    <div class="tool-title">1</div>
-                    <div class="tool-description">Ferramenta Ativa</div>
+        <section id="intro">
+            <h1 class="text-4xl font-bold text-slate-900">Guia de Permissões do Android em Apps Unreal para Meta Quest 3</h1>
+            <p class="text-xl text-slate-600">Este guia interativo ajuda desenvolvedores Unreal Engine a navegar pelo complexo processo de gerenciamento de permissões do Android para aplicativos do Meta Quest, garantindo conformidade com as políticas da Meta e melhorando a segurança e a confiança do usuário.</p>
+        </section>
+
+        <section id="why">
+            <h2><span class="text-teal-700">#</span> Por que Gerenciar Permissões?</h2>
+            <p>Gerenciar permissões não é apenas uma tarefa técnica; é um pilar fundamental para o sucesso do seu aplicativo na loja Meta Quest. Um conjunto excessivo de permissões pode levar a problemas significativos. Esta seção explica por que você deve dedicar atenção especial a este aspecto do desenvolvimento.</p>
+            <div class="grid md:grid-cols-3 gap-6 mt-8 not-prose">
+                <div class="custom-card text-center">
+                    <div class="text-4xl mb-4">🛡️</div>
+                    <h3 class="font-bold text-lg mb-2 text-slate-800">Conformidade e Submissão</h3>
+                    <p class="text-sm text-slate-500">A Meta possui diretrizes rigorosas. Permissões desnecessárias, especialmente as que exigem revisão ou são proibidas, podem levar à rejeição imediata do seu aplicativo, causando atrasos no lançamento.</p>
                 </div>
-                <div class="tool-card">
-                    <div class="tool-title">2</div>
-                    <div class="tool-description">Em Desenvolvimento</div>
+                <div class="custom-card text-center">
+                    <div class="text-4xl mb-4">👤</div>
+                    <h3 class="font-bold text-lg mb-2 text-slate-800">Confiança do Usuário</h3>
+                    <p class="text-sm text-slate-500">Solicitar permissões irrelevantes (como acesso a chamadas telefônicas) pode gerar desconfiança e preocupações com a privacidade, levando a avaliações negativas e menor número de instalações.</p>
                 </div>
-                <div class="tool-card">
-                    <div class="tool-title">3+</div>
-                    <div class="tool-description">Planejadas</div>
+                <div class="custom-card text-center">
+                    <div class="text-4xl mb-4">⚙️</div>
+                    <h3 class="font-bold text-lg mb-2 text-slate-800">Desempenho e Estabilidade</h3>
+                    <p class="text-sm text-slate-500">Embora sutil, um manifesto limpo com apenas as permissões essenciais pode contribuir para um aplicativo mais estável, com menor tamanho de APK e comportamento mais previsível.</p>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <!-- Tools Section -->
-        <div id="tools" class="section">
-            <h2>Ferramentas Ativas</h2>
-            <p>Aplicações completamente funcionais e disponíveis para uso.</p>
-
-            <div class="tool-grid">
-                <div class="tool-card">
-                    <div class="tool-status status-active">Ativo</div>
-                    <div class="tool-title">Android Permissions Manager</div>
-                    <div class="tool-description">
-                        Guia interativo para gerenciamento de permissões do Android em aplicações Unreal Engine para Meta Quest 3. 
-                        Inclui políticas da Meta e troubleshooting completo.
+        <section id="how">
+            <h2><span class="text-teal-700">#</span> Como o Manifesto Funciona</h2>
+            <p>A Unreal Engine gera o arquivo `AndroidManifest.xml` dinamicamente durante o empacotamento. Ele combina múltiplas fontes, resultando em um arquivo final que muitas vezes contém mais permissões do que o esperado. Entender esse processo de mesclagem é crucial para saber como removê-las efetivamente.</p>
+            <div class="mt-8 custom-card not-prose">
+                <h3 class="text-center font-bold text-lg mb-6 text-slate-800">O Processo de Mesclagem do Manifesto</h3>
+                <div class="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-4">
+                    <div class="flex flex-col space-y-2 items-center text-center">
+                        <div class="p-4 bg-slate-100 rounded-lg shadow w-40">Padrões da Engine</div>
+                        <div class="p-4 bg-slate-100 rounded-lg shadow w-40">Plugins Meta XR</div>
+                        <div class="p-4 bg-slate-100 rounded-lg shadow w-40">Plugins de Terceiros</div>
                     </div>
-                    <div class="tool-actions">
-                        <a href="https://dashlucas.github.io/Burnverso/#troubleshooting" class="btn btn-primary" target="_blank">
-                            Acessar Ferramenta →
-                        </a>
-                        <a href="https://github.com/dashlucas/Burnverso" class="btn btn-secondary" target="_blank">
-                            Ver Código
-                        </a>
+                    <div class="flow-arrow hidden md:flex"></div>
+                    <div class="md:hidden text-2xl">↓</div>
+                    <div class="p-6 bg-blue-100 rounded-lg shadow text-center">
+                        <h4 class="font-bold text-blue-800">Mesclagem do Gradle</h4>
+                        <p class="text-sm text-blue-600">Combina todas as fontes</p>
+                    </div>
+                    <div class="flow-arrow hidden md:flex"></div>
+                    <div class="md:hidden text-2xl">↓</div>
+                    <div class="p-6 bg-teal-100 rounded-lg shadow text-center">
+                        <h4 class="font-bold text-teal-800">Nosso Arquivo de Remoção</h4>
+                        <p class="text-sm text-teal-600">Aplica regras `tools:node="remove"`</p>
+                    </div>
+                    <div class="flow-arrow hidden md:flex"></div>
+                    <div class="md:hidden text-2xl">↓</div>
+                    <div class="p-6 bg-green-100 rounded-lg shadow text-center">
+                        <h4 class="font-bold text-green-800">APK Final</h4>
+                        <p class="text-sm text-green-600">Manifesto limpo</p>
+                    </div>
+                </div>
+                <div class="mt-6 p-4 bg-amber-50 border-l-4 border-amber-400">
+                    <p class="font-bold text-amber-800">O Segredo: `tools:node="remove"`</p>
+                    <p class="text-sm text-amber-700">Este é o atributo mágico. Quando você o adiciona a uma declaração de permissão em um arquivo de manifesto com alta prioridade (como o que vamos criar), ele instrui o processo de mesclagem a remover essa permissão do APK final, mesmo que ela tenha sido adicionada por outra fonte.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="identify">
+            <h2><span class="text-teal-700">#</span> Identificar Permissões</h2>
+            <p>Antes de remover, você precisa saber quais permissões seu aplicativo está solicitando. Existem várias ferramentas para inspecionar o `AndroidManifest.xml` final do seu APK. A "fonte da verdade" é sempre o Meta Horizon Developer Dashboard, pois é o que a equipe de revisão da Meta utilizará.</p>
+            <div class="mt-6 not-prose">
+                <div class="custom-card">
+                    <div class="border-b border-slate-200">
+                        <nav class="-mb-px flex space-x-6" id="identify-tabs">
+                            <button data-tab="tab-meta" class="tab-button-identify shrink-0 border-b-2 border-teal-500 px-1 py-4 text-sm font-medium text-teal-600">Meta Horizon Dashboard</button>
+                            <button data-tab="tab-studio" class="tab-button-identify shrink-0 border-b-2 border-transparent px-1 py-4 text-sm font-medium text-slate-500 hover:border-slate-300 hover:text-slate-700">Android Studio</button>
+                            <button data-tab="tab-aapt" class="tab-button-identify shrink-0 border-b-2 border-transparent px-1 py-4 text-sm font-medium text-slate-500 hover:border-slate-300 hover:text-slate-700">aapt.exe</button>
+                        </nav>
+                    </div>
+                    <div class="py-6">
+                        <div id="tab-meta" class="tab-content-identify">
+                            <h3 class="font-semibold text-lg text-slate-800">Verificação Final (Recomendado)</h3>
+                            <ol class="list-decimal list-inside mt-4 space-y-2 text-slate-600">
+                                <li>Faça o upload do seu APK para o <a href="https://developer.oculus.com/manage/" target="_blank" class="text-teal-600 hover:underline">Meta Horizon Developer Dashboard</a>.</li>
+                                <li>Navegue até "Distribution > Builds".</li>
+                                <li>Selecione a aba "Details" para a sua build.</li>
+                                <li>O painel exibirá uma lista completa de todas as permissões detectadas.</li>
+                            </ol>
+                        </div>
+                        <div id="tab-studio" class="tab-content-identify hidden">
+                            <h3 class="font-semibold text-lg text-slate-800">Inspeção Local</h3>
+                            <ol class="list-decimal list-inside mt-4 space-y-2 text-slate-600">
+                                <li>No Android Studio, selecione `File > Profile or Debug APK`.</li>
+                                <li>Escolha o seu arquivo APK empacotado.</li>
+                                <li>Navegue pela árvore de diretórios do APK e abra o `AndroidManifest.xml`.</li>
+                                <li>Procure por todas as tags `<uses-permission>`.</li>
+                            </ol>
+                        </div>
+                        <div id="tab-aapt" class="tab-content-identify hidden">
+                            <h3 class="font-semibold text-lg text-slate-800">Linha de Comando Rápida</h3>
+                            <p class="text-slate-600">Use a ferramenta `aapt.exe` do Android SDK Build Tools com o seguinte comando:</p>
+                            <pre class="mt-4"><code>aapt.exe dump permissions C:\caminho\para\SeuAPK.apk</code></pre>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <!-- Development Section -->
-        <div id="development" class="section">
-            <h2>Em Desenvolvimento</h2>
-            <p>Ferramentas em fase de desenvolvimento ativo.</p>
+        <section id="remove">
+            <h2><span class="text-teal-700">#</span> Remover Permissões</h2>
+            <p>Esta seção fornece as ferramentas interativas para gerar o código necessário para remover permissões indesejadas do seu manifesto. Escolha o método que melhor se adapta ao seu projeto. Para a maioria dos casos (projetos Blueprint ou C++), o "Método 1" é o mais simples e recomendado.</p>
+            <div class="mt-6 not-prose">
+                <div class="custom-card">
+                    <div class="border-b border-slate-200">
+                        <nav class="-mb-px flex space-x-6" id="remove-tabs">
+                            <button data-tab="tab-method1" class="tab-button-remove shrink-0 border-b-2 border-teal-500 px-1 py-4 text-sm font-medium text-teal-600">Método 1: Abordagem Simples (.txt)</button>
+                            <button data-tab="tab-method2" class="tab-button-remove shrink-0 border-b-2 border-transparent px-1 py-4 text-sm font-medium text-slate-500 hover:border-slate-300 hover:text-slate-700">Método 2: Abordagem C++</button>
+                        </nav>
+                    </div>
+                    <div class="py-6">
+                        <div id="tab-method1" class="tab-content-remove">
+                            <h3 class="font-semibold text-lg text-slate-800">Usando `ManifestRequirementsAdditions.txt`</h3>
+                            <ol class="list-decimal list-inside mt-4 space-y-2 text-slate-600">
+                                <li>No diretório raiz do seu projeto, crie a estrutura de pastas: `Build\Android`.</li>
+                                <li>Dentro de `Build\Android`, crie um novo arquivo de texto chamado <strong>`ManifestRequirementsAdditions.txt`</strong>.</li>
+                                <li>Cole o código gerado abaixo neste arquivo.</li>
+                            </ol>
+                            <div class="mt-6">
+                                <label for="permissions-input-1" class="block text-sm font-medium text-slate-700">Cole aqui as permissões a remover (uma por linha):</label>
+                                <textarea id="permissions-input-1" rows="4" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 sm:text-sm p-2" placeholder="android.permission.CALL_PHONE&#10;android.permission.READ_EXTERNAL_STORAGE"></textarea>
+                                <button id="generate-btn-1" class="mt-3 inline-flex items-center rounded-md border border-transparent bg-teal-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2">Gerar Código</button>
+                            </div>
+                            <div class="mt-4">
+                                <label class="block text-sm font-medium text-slate-700">Código gerado para `ManifestRequirementsAdditions.txt`:</label>
+                                <pre id="output-1" class="mt-1"><code class="language-xml">&lt;!-- Clique em 'Gerar Código' para ver o resultado --&gt;</code></pre>
+                            </div>
+                        </div>
+                        <div id="tab-method2" class="tab-content-remove hidden">
+                            <h3 class="font-semibold text-lg text-slate-800">Usando a Linguagem de Plugin da Unreal (C++)</h3>
+                            <p class="text-slate-600">Este método oferece mais controle e é ideal para projetos C++ que precisam aplicar regras condicionalmente.</p>
+                            <h4 class="font-semibold mt-4 text-slate-700">Passo 1: Modifique `PROJECT_NAME.Build.cs`</h4>
+                            <p class="text-slate-600">No arquivo `SeuProjeto\Source\SeuProjeto\PROJECT_NAME.Build.cs`, adicione o seguinte código C#:</p>
+                            <pre><code class="language-csharp">if (Target.Platform == UnrealTargetPlatform.Android && Target.Configuration == UnrealTargetConfiguration.Shipping) {
+    var manifest_file = System.IO.Path.Combine(ModuleDirectory, "RemovePermissions.xml");
+    AdditionalPropertiesForReceipt.Add("AndroidPlugin", manifest_file);
+}</code></pre>
+                            
+                            <h4 class="font-semibold mt-6 text-slate-700">Passo 2: Crie e Popule `RemovePermissions.xml`</h4>
+                             <ol class="list-decimal list-inside mt-2 space-y-2 text-slate-600">
+                                <li>Na mesma pasta (`SeuProjeto\Source\SeuProjeto`), crie um arquivo XML chamado <strong>`RemovePermissions.xml`</strong>.</li>
+                                <li>Use o gerador abaixo para criar o conteúdo deste arquivo.</li>
+                            </ol>
 
-            <div class="tool-grid">
-                <div class="tool-card">
-                    <div class="tool-status status-development">Em Desenvolvimento</div>
-                    <div class="tool-title">Build Pipeline Optimizer</div>
-                    <div class="tool-description">
-                        Ferramenta para análise e otimização de pipelines de build para projetos Unreal Engine.
-                    </div>
-                    <div class="tool-actions">
-                        <span class="btn btn-secondary" style="opacity: 0.6;">Em Desenvolvimento</span>
-                    </div>
-                </div>
-
-                <div class="tool-card">
-                    <div class="tool-status status-development">Em Desenvolvimento</div>
-                    <div class="tool-title">Asset Dependency Analyzer</div>
-                    <div class="tool-description">
-                        Analisador de dependências de assets para identificação de recursos não utilizados.
-                    </div>
-                    <div class="tool-actions">
-                        <span class="btn btn-secondary" style="opacity: 0.6;">Em Desenvolvimento</span>
+                            <div class="mt-6">
+                                <label for="permissions-input-2" class="block text-sm font-medium text-slate-700">Cole aqui as permissões a remover (uma por linha):</label>
+                                <textarea id="permissions-input-2" rows="4" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 sm:text-sm p-2" placeholder="android.permission.WAKE_LOCK&#10;android.permission.WRITE_EXTERNAL_STORAGE"></textarea>
+                                <button id="generate-btn-2" class="mt-3 inline-flex items-center rounded-md border border-transparent bg-teal-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2">Gerar Código</button>
+                            </div>
+                            <div class="mt-4">
+                                <label class="block text-sm font-medium text-slate-700">Código gerado para `RemovePermissions.xml`:</label>
+                                <pre id="output-2" class="mt-1"><code class="language-xml">&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;root xmlns:android="http://schemas.android.com/apk/res/android"&gt;
+    &lt;androidManifestUpdates&gt;
+        &lt;!-- Clique em 'Gerar Código' para ver o resultado --&gt;
+    &lt;/androidManifestUpdates&gt;
+&lt;/root&gt;</code></pre>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <!-- Documentation Section -->
-        <div id="docs" class="section">
-            <h2>Documentação</h2>
-            <p>Guias e documentação para uso das ferramentas disponíveis.</p>
-
-            <h3>Começando</h3>
-            <p>Cada ferramenta possui sua própria documentação integrada. Para acessar, clique no link da ferramenta desejada no menu lateral ou na seção de ferramentas ativas.</p>
-
-            <h3>Estrutura do Projeto</h3>
-            <p>Todas as ferramentas seguem uma estrutura consistente:</p>
-            <ul style="margin-left: 2rem; margin-top: 1rem;">
-                <li>Interface limpa e intuitiva</li>
-                <li>Documentação integrada</li>
-                <li>Exemplos práticos</li>
-                <li>Solução de problemas comuns</li>
-            </ul>
-        </div>
-
-        <!-- Add Tool Section -->
-        <div id="add-tool" class="section">
-            <h2>Adicionar Nova Ferramenta</h2>
-            <p>Guia para expandir o portal com novas aplicações.</p>
-
-            <div class="add-tool-section">
-                <div class="add-icon">🔧</div>
-                <h3>Processo de Adição</h3>
-                <p>Para adicionar uma nova ferramenta ao portal, siga estes passos:</p>
+        <section id="policies">
+            <h2><span class="text-teal-700">#</span> Políticas de Permissão da Meta</h2>
+            <p>A Meta tem políticas claras sobre o que é permitido. Algumas permissões são proibidas, enquanto outras exigem uma justificativa detalhada durante a submissão. Use esta tabela pesquisável para verificar rapidamente as políticas para permissões comuns e evitar rejeições.</p>
+            <div class="mt-6 custom-card not-prose">
+                <input type="text" id="permission-search" placeholder="Pesquisar permissão..." class="w-full p-2 mb-4 border border-slate-300 rounded-md shadow-sm">
+                <div class="overflow-x-auto max-h-[600px]">
+                    <table id="permissions-table" class="w-full text-sm text-left text-slate-500">
+                        <thead class="text-xs text-slate-700 uppercase bg-slate-50 sticky top-0">
+                            <tr>
+                                <th scope="col" class="py-3 px-6">Permissão</th>
+                                <th scope="col" class="py-3 px-6">Notas de Uso / Posição da Meta</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Table rows will be inserted here by JS -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
+        </section>
 
-            <h3>1. Desenvolvimento</h3>
-            <ul style="margin-left: 2rem;">
-                <li>Desenvolva a aplicação com interface consistente</li>
-                <li>Inclua documentação integrada</li>
-                <li>Teste completamente a funcionalidade</li>
-            </ul>
+        <section id="troubleshooting">
+            <h2><span class="text-teal-700">#</span> Solução de Problemas Comuns</h2>
+            <p>Mesmo seguindo os passos corretamente, problemas podem surgir. Esta seção aborda os desafios mais comuns encontrados ao gerenciar permissões, desde permissões que se recusam a desaparecer até falhas de compilação.</p>
+            <div id="accordion-container" class="space-y-4 mt-6">
+                <!-- Accordion items will be inserted here by JS -->
+            </div>
+        </section>
 
-            <h3>2. Deploy</h3>
-            <ul style="margin-left: 2rem;">
-                <li>Configure hospedagem (GitHub Pages recomendado)</li>
-                <li>Teste o deploy em ambiente de produção</li>
-                <li>Configure domínio personalizado se necessário</li>
-            </ul>
+        <!-- NEW CONTENT HUB SECTION -->
+        <section id="new-content-hub" class="mt-12">
+            <h2><span class="text-teal-700">#</span> Explore Mais Recursos e Ferramentas</h2>
+            <p>Esta é a sua área para descobrir novos guias, tutoriais e ferramentas interativas para aprimorar seu desenvolvimento XR. Fique atento às atualizações!</p>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8 not-prose">
+                <div class="custom-card">
+                    <h3 class="font-bold text-lg mb-2 text-slate-800">Guia de Otimização de Performance XR</h3>
+                    <p class="text-sm text-slate-500">Dicas e truques para otimizar o desempenho de seus aplicativos Unreal Engine para dispositivos Quest.</p>
+                    <a href="#" class="mt-4 inline-flex items-center text-teal-600 hover:text-teal-800 font-medium">
+                        Ler Guia
+                        <svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3"></path></svg>
+                    </a>
+                </div>
+                <div class="custom-card">
+                    <h3 class="font-bold text-lg mb-2 text-slate-800">Ferramenta de Geração de Manifestos</h3>
+                    <p class="text-sm text-slate-500">Crie manifestos Android personalizados com base nas suas necessidades de projeto.</p>
+                    <a href="#" class="mt-4 inline-flex items-center text-teal-600 hover:text-teal-800 font-medium">
+                        Usar Ferramenta
+                        <svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3"></path></svg>
+                    </a>
+                </div>
+                <div class="custom-card">
+                    <h3 class="font-bold text-lg mb-2 text-slate-800">Melhores Práticas de UX em VR</h3>
+                    <p class="text-sm text-slate-500">Explore princípios de design de interface e experiência do usuário para aplicativos de Realidade Virtual.</p>
+                    <a href="#" class="mt-4 inline-flex items-center text-teal-600 hover:text-teal-800 font-medium">
+                        Ver Artigo
+                        <svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3"></path></svg>
+                    </a>
+                </div>
+                <!-- Adicione mais cards aqui para novos conteúdos -->
+            </div>
+        </section>
+        <!-- END NEW CONTENT HUB SECTION -->
 
-            <h3>3. Integração</h3>
-            <ul style="margin-left: 2rem;">
-                <li>Adicione entrada no menu lateral</li>
-                <li>Crie card na seção apropriada</li>
-                <li>Configure links e descrições</li>
-                <li>Atualize estatísticas</li>
-            </ul>
-        </div>
-    </div>
+    </main>
+</div>
 
-    <script>
-        function showSection(sectionId) {
-            // Hide all sections
-            document.querySelectorAll('.section').forEach(section => {
-                section.classList.remove('active');
-            });
-            
-            // Show selected section
-            document.getElementById(sectionId).classList.add('active');
-            
-            // Update nav items
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.classList.remove('active');
-            });
-            
-            // Add active class to clicked item
-            event.target.classList.add('active');
-        }
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const sidebar = document.getElementById('sidebar');
 
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('mobile-open');
-        }
+    mobileMenuButton.addEventListener('click', () => {
+        sidebar.classList.toggle('-translate-x-full');
+    });
 
-        // Close sidebar when clicking outside on mobile
-        document.addEventListener('click', function(event) {
-            const sidebar = document.getElementById('sidebar');
-            const toggle = document.querySelector('.mobile-toggle');
-            
-            if (window.innerWidth <= 768 && 
-                !sidebar.contains(event.target) && 
-                !toggle.contains(event.target)) {
-                sidebar.classList.remove('mobile-open');
+    // Close sidebar when clicking a link (for mobile)
+    document.querySelectorAll('#sidebar nav a').forEach(link => {
+        link.addEventListener('click', () => {
+            if (window.innerWidth < 768) {
+                sidebar.classList.add('-translate-x-full');
             }
         });
-    </script>
+    });
+
+    // Tab functionality
+    function setupTabs(tabContainerId, buttonClass, contentClass) {
+        const tabContainer = document.getElementById(tabContainerId);
+        if (!tabContainer) return;
+
+        const tabButtons = tabContainer.querySelectorAll(`.${buttonClass}`);
+        const tabContents = document.querySelectorAll(`.${contentClass}`);
+
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                tabButtons.forEach(btn => {
+                    btn.classList.remove('border-teal-500', 'text-teal-600');
+                    btn.classList.add('border-transparent', 'text-slate-500', 'hover:border-slate-300', 'hover:text-slate-700');
+                });
+                button.classList.add('border-teal-500', 'text-teal-600');
+                button.classList.remove('border-transparent', 'text-slate-500');
+
+                const targetTab = button.getAttribute('data-tab');
+                tabContents.forEach(content => {
+                    if (content.id === targetTab) {
+                        content.classList.remove('hidden');
+                    } else {
+                        content.classList.add('hidden');
+                    }
+                });
+            });
+        });
+    }
+
+    setupTabs('identify-tabs', 'tab-button-identify', 'tab-content-identify');
+    setupTabs('remove-tabs', 'tab-button-remove', 'tab-content-remove');
+
+
+    // Code Generator
+    const generateBtn1 = document.getElementById('generate-btn-1');
+    const permissionsInput1 = document.getElementById('permissions-input-1');
+    const output1 = document.getElementById('output-1');
+
+    generateBtn1.addEventListener('click', () => {
+        const permissions = permissionsInput1.value.trim().split('\n').filter(p => p);
+        if (permissions.length === 0) {
+            output1.innerHTML = `<code class="language-xml">&lt;!-- Adicione pelo menos uma permissão na caixa de texto acima. --&gt;</code>`;
+            return;
+        }
+        const generatedCode = permissions.map(p => `    &lt;uses-permission android:name="${p.trim()}" tools:node="remove" /&gt;`).join('\n');
+        output1.innerHTML = `<code class="language-xml">${generatedCode}</code>`;
+    });
+    
+    const generateBtn2 = document.getElementById('generate-btn-2');
+    const permissionsInput2 = document.getElementById('permissions-input-2');
+    const output2 = document.getElementById('output-2');
+    
+    generateBtn2.addEventListener('click', () => {
+        const permissions = permissionsInput2.value.trim().split('\n').filter(p => p);
+        let generatedCode = `&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;root xmlns:android="http://schemas.android.com/apk/res/android"&gt;
+    &lt;androidManifestUpdates&gt;
+`;
+        if (permissions.length === 0) {
+           generatedCode += `        &lt;!-- Adicione pelo menos uma permissão na caixa de texto acima. --&gt;`;
+        } else {
+            generatedCode += permissions.map(p => `        &lt;removePermission android:name="${p.trim()}" /&gt;`).join('\n');
+        }
+
+        generatedCode += `
+    &lt;/androidManifestUpdates&gt;
+&lt;/root&gt;`;
+        output2.innerHTML = `<code class="language-xml">${generatedCode}</code>`;
+    });
+
+
+    // Permissions Table Data & Filtering
+    const permissionsData = [
+        { perm: 'ACCESS_MEDIA_LOCATION', note: 'Necessária apenas se o aplicativo precisar ler dados Exif protegidos de arquivos de mídia de armazenamento compartilhado. Não necessária para ler ou gravar arquivos de mídia de armazenamento compartilhado.' },
+        { perm: 'BATTERY_STATS', note: 'Gerenciada pela plataforma. Considere um recurso de salvamento automático em seu aplicativo se estiver preocupado com bateria fraca.' },
+        { perm: 'BLUETOOTH_CONNECT, BLUETOOTH_SCAN, etc.', note: 'Permitidas apenas para interoperabilidade com um dispositivo Bluetooth de terceiros que não pode ser emparelhado de outra forma através da interface Bluetooth do aplicativo Meta Quest.' },
+        { perm: 'CAMERA', note: 'Usos permitidos incluem aplicativos construídos com Unity que usam `WebcamTexture`.' },
+        { perm: 'CHANGE_WIFI_STATE', note: 'Aplicativos não devem alterar as configurações do dispositivo.' },
+        { perm: 'FOREGROUND_SERVICE', note: 'Serviços em segundo plano e em primeiro plano não são suportados atualmente.' },
+        { perm: 'HEADSET_CAMERA', note: 'Usos permitidos incluem a identificação de objetos com os quais o aplicativo pode interagir.' },
+        { perm: 'KILL_BACKGROUND_PROCESSES', note: 'Gerenciada pela plataforma.' },
+        { perm: 'MANAGE_EXTERNAL_STORAGE', note: 'Usos permitidos incluem recursos de gerenciamento de arquivos.' },
+        { perm: 'MODIFY_AUDIO_SETTINGS', note: 'Aplicativos não devem alterar as configurações do dispositivo.' },
+        { perm: 'POST_NOTIFICATIONS', note: 'Aplicativos devem enviar notificações através das ferramentas na aba "Engagement > User Notifications" do Meta Horizon Developer Dashboard, que não exigem esta permissão.' },
+        { perm: 'READ_EXTERNAL_STORAGE', note: 'Não necessária para salvar jogos; use armazenamento persistente com escopo de aplicativo. Não necessária para DLC. Não necessária para ler arquivos de mídia de armazenamento compartilhado ou arquivos de mídia criados pelo próprio aplicativo.' },
+        { perm: 'READ_PHONE_STATE', note: 'Aplicativos não devem acessar IDs de hardware.' },
+        { perm: 'RECORD_AUDIO', note: 'Usos permitidos incluem VOIP ou outros recursos que precisam de acesso ao microfone.' },
+        { perm: 'AVATAR_CAMERA', note: 'Usos permitidos incluem videoconferência.' },
+        { perm: 'WAKE_LOCK', note: 'Gerenciada pela plataforma.' },
+        { perm: 'WRITE_EXTERNAL_STORAGE', note: 'Não necessária para salvar jogos; use armazenamento persistente com escopo de aplicativo. Não necessária para usar DLC. Não necessária para gravar arquivos de mídia de armazenamento compartilhado.' }
+    ];
+
+    const tableBody = document.querySelector('#permissions-table tbody');
+    function populateTable(data) {
+        tableBody.innerHTML = '';
+        data.forEach(item => {
+            const row = document.createElement('tr');
+            row.className = 'bg-white border-b';
+            row.innerHTML = `
+                <td class="py-4 px-6 font-medium text-slate-900 whitespace-nowrap"><code>${item.perm}</code></td>
+                <td class="py-4 px-6">${item.note}</td>
+            `;
+            tableBody.appendChild(row);
+        });
+    }
+
+    populateTable(permissionsData);
+
+    const searchInput = document.getElementById('permission-search');
+    searchInput.addEventListener('keyup', () => {
+        const searchTerm = searchInput.value.toLowerCase();
+        const filteredData = permissionsData.filter(item => 
+            item.perm.toLowerCase().includes(searchTerm) || 
+            item.note.toLowerCase().includes(searchTerm)
+        );
+        populateTable(filteredData);
+    });
+
+    // Accordion data and creation
+    const accordionData = [
+        {
+            title: "A permissão persiste mesmo com `tools:node=\"remove\"`",
+            content: "<strong>Causa:</strong> Geralmente, isso ocorre por um erro de sintaxe, ausência do namespace `tools` no manifesto final, o arquivo `ManifestRequirementsAdditions.txt` estar no local errado ou um manifesto de maior prioridade na cadeia de mesclagem estar readicionando a permissão.<br><strong>Solução:</strong> Verifique a sintaxe e a localização do arquivo (`Build/Android`). Garanta que seu método de remoção tenha prioridade suficiente sobre a fonte que está adicionando a permissão."
+        },
+        {
+            title: "O aplicativo falha ou um recurso para de funcionar",
+            content: "<strong>Causa:</strong> Você removeu uma permissão essencial que um recurso principal do seu aplicativo ou uma biblioteca de terceiros necessita.<br><strong>Solução:</strong> Re-adicione a permissão suspeita e teste sistematicamente para identificar qual funcionalidade foi afetada. Consulte a tabela de políticas da Meta para entender as dependências comuns e evite remover permissões que são, de fato, necessárias."
+        },
+        {
+            title: "Falhas de compilação relacionadas ao Android SDK/NDK/Java",
+            content: "<strong>Causa:</strong> Configuração incorreta do ambiente de desenvolvimento Android. Isso pode incluir a variável de ambiente `JAVA_HOME` errada, versões incompatíveis do SDK/NDK ou níveis de API que não correspondem aos requisitos da sua versão da Unreal Engine.<br><strong>Solução:</strong> Em `Project Settings > Platforms > Android SDK`, verifique se todos os caminhos (SDK, NDK, Java) estão corretos e se os níveis de API são compatíveis com sua versão da UE."
+        },
+        {
+            title: "Upload bloqueado por `debuggable` definido como `true`",
+            content: "<strong>Causa:</strong> O seu APK foi empacotado como uma construção de 'Debug' ou 'Development', que não são permitidas para submissão à loja da Meta.<br><strong>Solução:</strong> Certifique-se de que você está empacotando seu projeto com a configuração de construção (Build Configuration) definida como 'Shipping' na Unreal Engine."
+        }
+    ];
+
+    const accordionContainer = document.getElementById('accordion-container');
+    accordionData.forEach((item, index) => {
+        const accordionItem = document.createElement('div');
+        accordionItem.className = 'custom-card';
+        accordionItem.innerHTML = `
+            <h3 class="mb-0">
+                <button
+                    type="button"
+                    class="flex w-full items-center justify-between text-left font-semibold text-lg"
+                    aria-expanded="false"
+                    aria-controls="accordion-content-${index}"
+                >
+                    <span>${item.title}</span>
+                    <span class="ml-6 flex-shrink-0">
+                        <svg class="h-6 w-6 transform transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                        </svg>
+                    </span>
+                </button>
+            </h3>
+            <div id="accordion-content-${index}" class="prose-custom max-w-none mt-2 pr-12 hidden">
+                <p>${item.content}</p>
+            </div>
+        `;
+        accordionContainer.appendChild(accordionItem);
+
+        const button = accordionItem.querySelector('button');
+        const content = accordionItem.querySelector(`#accordion-content-${index}`);
+        const icon = button.querySelector('svg');
+
+        button.addEventListener('click', () => {
+            const isExpanded = button.getAttribute('aria-expanded') === 'true';
+            button.setAttribute('aria-expanded', !isExpanded);
+            content.classList.toggle('hidden');
+            icon.classList.toggle('rotate-180');
+        });
+    });
+
+    // Active nav link on scroll
+    const sections = document.querySelectorAll('main section');
+    const navLinks = document.querySelectorAll('#nav-menu a');
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                navLinks.forEach(link => {
+                    link.classList.toggle('active', link.getAttribute('href').substring(1) === entry.target.id);
+                });
+            }
+        });
+    }, { rootMargin: "-30% 0px -70% 0px" });
+
+    sections.forEach(section => {
+        observer.observe(section);
+    });
+
+});
+</script>
+
 </body>
 </html>
