@@ -1,0 +1,163 @@
+    <nav id="nav-menu" class="text-slate-600 font-semibold">
+        <a href="#intro" class="nav-link block py-2.5 px-4 rounded">Introdução</a>
+        <a href="#why" class="nav-link block py-2.5 px-4 rounded">Por que Gerenciar?</a>
+        <a href="#how" class="nav-link block py-2.5 px-4 rounded">Como Funciona</a>
+        <a href="#identify" class="nav-link block py-2.5 px-4 rounded">Identificar Permissões</a>
+        <a href="#remove" class="nav-link block py-2.5 px-4 rounded">Remover Permissões</a>
+        <a href="#policies" class="nav-link block py-2.5 px-4 rounded">Políticas da Meta</a>
+        <a href="#troubleshooting" class="nav-link block py-2.5 px-4 rounded">Solução de Problemas</a>
+    </nav>
+</aside>
+
+<!-- Mobile menu button -->
+<button id="mobile-menu-button" class="md:hidden fixed top-4 left-4 z-40 bg-white p-2 rounded-md shadow-lg">
+    <svg class="h-6 w-6 text-slate-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+    </svg>
+</button>
+
+<!-- Content -->
+<main class="flex-1 p-4 sm:p-6 lg:p-10 prose-custom max-w-full">
+
+    <section id="intro">
+        <h1 class="text-4xl font-bold text-slate-900">Gerenciando Permissões do Android em Apps Unreal para Meta Quest 3</h1>
+        <p class="text-xl text-slate-600">Este guia interativo ajuda desenvolvedores Unreal Engine a navegar pelo complexo processo de gerenciamento de permissões do Android para aplicativos do Meta Quest, garantindo conformidade com as políticas da Meta e melhorando a segurança e a confiança do usuário.</p>
+    </section>
+
+    <section id="why">
+        <h2><span class="text-teal-700">#</span> Por que Gerenciar Permissões?</h2>
+        <p>Gerenciar permissões não é apenas uma tarefa técnica; é um pilar fundamental para o sucesso do seu aplicativo na loja Meta Quest. Um conjunto excessivo de permissões pode levar a problemas significativos. Esta seção explica por que você deve dedicar atenção especial a este aspecto do desenvolvimento.</p>
+        <div class="grid md:grid-cols-3 gap-6 mt-8 not-prose">
+            <div class="custom-card text-center">
+                <div class="text-4xl mb-4">🛡️</div>
+                <h3 class="font-bold text-lg mb-2 text-slate-800">Conformidade e Submissão</h3>
+                <p class="text-sm text-slate-500">A Meta possui diretrizes rigorosas. Permissões desnecessárias, especialmente as que exigem revisão ou são proibidas, podem levar à rejeição imediata do seu aplicativo, causando atrasos no lançamento.</p>
+            </div>
+            <div class="custom-card text-center">
+                <div class="text-4xl mb-4">👤</div>
+                <h3 class="font-bold text-lg mb-2 text-slate-800">Confiança do Usuário</h3>
+                <p class="text-sm text-slate-500">Solicitar permissões irrelevantes (como acesso a chamadas telefônicas) pode gerar desconfiança e preocupações com a privacidade, levando a avaliações negativas e menor número de instalações.</p>
+            </div>
+            <div class="custom-card text-center">
+                <div class="text-4xl mb-4">⚙️</div>
+                <h3 class="font-bold text-lg mb-2 text-slate-800">Desempenho e Estabilidade</h3>
+                <p class="text-sm text-slate-500">Embora sutil, um manifesto limpo com apenas as permissões essenciais pode contribuir para um aplicativo mais estável, com menor tamanho de APK e comportamento mais previsível.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="how">
+        <h2><span class="text-teal-700">#</span> Como o Manifesto Funciona</h2>
+         <p>A Unreal Engine gera o arquivo `AndroidManifest.xml` dinamicamente durante o empacotamento. Ele combina múltiplas fontes, resultando em um arquivo final que muitas vezes contém mais permissões do que o esperado. Entender esse processo de mesclagem é crucial para saber como removê-las efetivamente.</p>
+        <div class="mt-8 custom-card not-prose">
+            <h3 class="text-center font-bold text-lg mb-6 text-slate-800">O Processo de Mesclagem do Manifesto</h3>
+            <div class="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-4">
+                <div class="flex flex-col space-y-2 items-center text-center">
+                    <div class="p-4 bg-slate-100 rounded-lg shadow w-40">Padrões da Engine</div>
+                    <div class="p-4 bg-slate-100 rounded-lg shadow w-40">Plugins Meta XR</div>
+                    <div class="p-4 bg-slate-100 rounded-lg shadow w-40">Plugins de Terceiros</div>
+                </div>
+                <div class="flow-arrow hidden md:flex"></div>
+                <div class="md:hidden text-2xl">↓</div>
+                <div class="p-6 bg-blue-100 rounded-lg shadow text-center">
+                    <h4 class="font-bold text-blue-800">Mesclagem do Gradle</h4>
+                    <p class="text-sm text-blue-600">Combina todas as fontes</p>
+                </div>
+                <div class="flow-arrow hidden md:flex"></div>
+                <div class="md:hidden text-2xl">↓</div>
+                 <div class="p-6 bg-teal-100 rounded-lg shadow text-center">
+                    <h4 class="font-bold text-teal-800">Nosso Arquivo de Remoção</h4>
+                    <p class="text-sm text-teal-600">Aplica regras `tools:node="remove"`</p>
+                </div>
+                 <div class="flow-arrow hidden md:flex"></div>
+                 <div class="md:hidden text-2xl">↓</div>
+                <div class="p-6 bg-green-100 rounded-lg shadow text-center">
+                    <h4 class="font-bold text-green-800">APK Final</h4>
+                    <p class="text-sm text-green-600">Manifesto limpo</p>
+                </div>
+            </div>
+             <div class="mt-6 p-4 bg-amber-50 border-l-4 border-amber-400">
+                 <p class="font-bold text-amber-800">O Segredo: `tools:node="remove"`</p>
+                 <p class="text-sm text-amber-700">Este é o atributo mágico. Quando você o adiciona a uma declaração de permissão em um arquivo de manifesto com alta prioridade (como o que vamos criar), ele instrui o processo de mesclagem a remover essa permissão do APK final, mesmo que ela tenha sido adicionada por outra fonte.</p>
+             </div>
+        </div>
+    </section>
+
+    <section id="identify">
+        <h2><span class="text-teal-700">#</span> Identificar Permissões</h2>
+        <p>Antes de remover, você precisa saber quais permissões seu aplicativo está solicitando. Existem várias ferramentas para inspecionar o `AndroidManifest.xml` final do seu APK. A "fonte da verdade" é sempre o Meta Horizon Developer Dashboard, pois é o que a equipe de revisão da Meta utilizará.</p>
+        <div class="mt-6 not-prose">
+            <div class="custom-card">
+                <div class="border-b border-slate-200">
+                    <nav class="-mb-px flex space-x-6" id="identify-tabs">
+                        <button data-tab="tab-meta" class="tab-button-identify shrink-0 border-b-2 border-teal-500 px-1 py-4 text-sm font-medium text-teal-600">Meta Horizon Dashboard</button>
+                        <button data-tab="tab-studio" class="tab-button-identify shrink-0 border-b-2 border-transparent px-1 py-4 text-sm font-medium text-slate-500 hover:border-slate-300 hover:text-slate-700">Android Studio</button>
+                        <button data-tab="tab-aapt" class="tab-button-identify shrink-0 border-b-2 border-transparent px-1 py-4 text-sm font-medium text-slate-500 hover:border-slate-300 hover:text-slate-700">aapt.exe</button>
+                    </nav>
+                </div>
+                <div class="py-6">
+                    <div id="tab-meta" class="tab-content-identify">
+                         <h3 class="font-semibold text-lg text-slate-800">Verificação Final (Recomendado)</h3>
+                         <ol class="list-decimal list-inside mt-4 space-y-2 text-slate-600">
+                             <li>Faça o upload do seu APK para o <a href="<https://developer.oculus.com/manage/>" target="_blank" class="text-teal-600 hover:underline">Meta Horizon Developer Dashboard</a>.</li>
+                             <li>Navegue até "Distribution > Builds".</li>
+                             <li>Selecione a aba "Details" para a sua build.</li>
+                             <li>O painel exibirá uma lista completa de todas as permissões detectadas.</li>
+                         </ol>
+                    </div>
+                    <div id="tab-studio" class="tab-content-identify hidden">
+                         <h3 class="font-semibold text-lg text-slate-800">Inspeção Local</h3>
+                        <ol class="list-decimal list-inside mt-4 space-y-2 text-slate-600">
+                            <li>No Android Studio, selecione `File > Profile or Debug APK`.</li>
+                            <li>Escolha o seu arquivo APK empacotado.</li>
+                            <li>Navegue pela árvore de diretórios do APK e abra o `AndroidManifest.xml`.</li>
+                            <li>Procure por todas as tags `<uses-permission>`.</li>
+                        </ol>
+                    </div>
+                    <div id="tab-aapt" class="tab-content-identify hidden">
+                         <h3 class="font-semibold text-lg text-slate-800">Linha de Comando Rápida</h3>
+                         <p class="text-slate-600">Use a ferramenta `aapt.exe` do Android SDK Build Tools com o seguinte comando:</p>
+                         <pre class="mt-4"><code>aapt.exe dump permissions C:\\caminho\\para\\SeuAPK.apk</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="remove">
+        <h2><span class="text-teal-700">#</span> Remover Permissões</h2>
+         <p>Esta seção fornece as ferramentas interativas para gerar o código necessário para remover permissões indesejadas do seu manifesto. Escolha o método que melhor se adapta ao seu projeto. Para a maioria dos casos (projetos Blueprint ou C++), o "Método 1" é o mais simples e recomendado.</p>
+        <div class="mt-6 not-prose">
+             <div class="custom-card">
+                 <div class="border-b border-slate-200">
+                     <nav class="-mb-px flex space-x-6" id="remove-tabs">
+                         <button data-tab="tab-method1" class="tab-button-remove shrink-0 border-b-2 border-teal-500 px-1 py-4 text-sm font-medium text-teal-600">Método 1: Abordagem Simples (.txt)</button>
+                         <button data-tab="tab-method2" class="tab-button-remove shrink-0 border-b-2 border-transparent px-1 py-4 text-sm font-medium text-slate-500 hover:border-slate-300 hover:text-slate-700">Método 2: Abordagem C++</button>
+                     </nav>
+                 </div>
+                 <div class="py-6">
+                     <div id="tab-method1" class="tab-content-remove">
+                         <h3 class="font-semibold text-lg text-slate-800">Usando `ManifestRequirementsAdditions.txt`</h3>
+                         <ol class="list-decimal list-inside mt-4 space-y-2 text-slate-600">
+                            <li>No diretório raiz do seu projeto, crie a estrutura de pastas: `Build\\Android`.</li>
+                             <li>Dentro de `Build\\Android`, crie um novo arquivo de texto chamado <strong>`ManifestRequirementsAdditions.txt`</strong>.</li>
+                             <li>Cole o código gerado abaixo neste arquivo.</li>
+                         </ol>
+                         <div class="mt-6">
+                             <label for="permissions-input-1" class="block text-sm font-medium text-slate-700">Cole aqui as permissões a remover (uma por linha):</label>
+                             <textarea id="permissions-input-1" rows="4" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 sm:text-sm p-2" placeholder="android.permission.CALL_PHONE&#10;android.permission.READ_EXTERNAL_STORAGE"></textarea>
+                              <button id="generate-btn-1" class="mt-3 inline-flex items-center rounded-md border border-transparent bg-teal-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2">Gerar Código</button>
+                         </div>
+                         <div class="mt-4">
+                             <label class="block text-sm font-medium text-slate-700">Código gerado para `ManifestRequirementsAdditions.txt`:</label>
+                             <pre id="output-1" class="mt-1"><code class="language-xml">&lt;!-- Clique em 'Gerar Código' para ver o resultado --&gt;</code></pre>
+                         </div>
+                     </div>
+                     <div id="tab-method2" class="tab-content-remove hidden">
+                         <h3 class="font-semibold text-lg text-slate-800">Usando a Linguagem de Plugin da Unreal (C++)</h3>
+                         <p class="text-slate-600">Este método oferece mais controle e é ideal para projetos C++ que precisam aplicar regras condicionalmente.</p>
+                         <h4 class="font-semibold mt-4 text-slate-700">Passo 1: Modifique `PROJECT_NAME.Build.cs`</h4>
+                         <p class="text-slate-600">No arquivo `SeuProjeto\\Source\\SeuProjeto\\PROJECT_NAME.Build.cs`, adicione o seguinte código C#:</p>
+                         <pre><code class="language-csharp">if (Target.Platform == UnrealTargetPlatform.Android && Target.Configuration == UnrealTargetConfiguration.Shipping) {
+var manifest_file = System.IO.Path.Combine(ModuleDirectory, "RemovePermissions.xml");
+AdditionalPropertiesForReceipt.Add("AndroidPlugin", manifest_file);
