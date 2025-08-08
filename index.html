@@ -75,56 +75,6 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #FF00FF;
         }
-        
-        /* Estilo para o botão da Gemini API e container de resultado */
-        .gemini-btn {
-            background-color: #ff00ff;
-            color: white;
-            padding: 10px 20px;
-            border: 2px solid #ff00ff;
-            border-radius: 8px;
-            font-family: 'Orbitron', sans-serif;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-shadow: 0 0 8px rgba(255, 255, 255, 0.7);
-            box-shadow: 0 0 15px rgba(255, 0, 255, 0.5);
-        }
-        .gemini-btn:hover {
-            background-color: #00ffff;
-            border-color: #00ffff;
-            box-shadow: 0 0 25px rgba(0, 255, 255, 0.8);
-        }
-        .gemini-btn:disabled {
-            background-color: #555;
-            border-color: #777;
-            cursor: not-allowed;
-            box-shadow: none;
-        }
-
-        #idea-container {
-            border: 1px solid #ff00ff;
-            margin-top: 20px;
-            padding: 16px;
-            border-radius: 8px;
-            background: rgba(255, 0, 255, 0.05);
-            box-shadow: 0 0 10px rgba(255, 0, 255, 0.2);
-        }
-
-        .loader {
-            width: 24px;
-            height: 24px;
-            border: 3px solid #00ffff;
-            border-bottom-color: transparent;
-            border-radius: 50%;
-            display: inline-block;
-            box-sizing: border-box;
-            animation: rotation 1s linear infinite;
-        }
-
-        @keyframes rotation {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
     </style>
 </head>
 <body class="w-full">
@@ -148,17 +98,7 @@
         <section id="about" class="py-20">
             <div class="card p-8 rounded-lg max-w-4xl mx-auto text-center">
                 <h2 class="text-3xl font-bold mb-4 text-cyan-300 text-glow-cyan">SOBRE MIM</h2>
-                <p id="about-text" class="text-lg leading-relaxed mb-8 text-left"></p>
-                
-                <!-- Botão e container para a feature da Gemini API -->
-                <button id="generate-idea-btn" class="gemini-btn">✨ Gerar Ideia para Game Jam</button>
-                <div id="loader" class="hidden mt-4 mx-auto">
-                    <div class="loader"></div>
-                </div>
-                <div id="idea-container" class="hidden text-left">
-                    <h3 class="text-xl font-bold text-fuchsia-300 mb-2">Conceito de Jogo Gerado:</h3>
-                    <p id="idea-text" class="text-gray-300"></p>
-                </div>
+                <p id="about-text" class="text-lg leading-relaxed"></p>
             </div>
         </section>
 
@@ -279,62 +219,6 @@
                 <a href="${portfolioData.contact.artstation}" target="_blank" class="text-fuchsia-400 hover:text-glow-magenta transition">ArtStation</a>
             `;
         }
-
-        // --- LÓGICA DA GEMINI API ---
-
-        async function generateGameIdea() {
-            const generateBtn = document.getElementById('generate-idea-btn');
-            const loader = document.getElementById('loader');
-            const ideaContainer = document.getElementById('idea-container');
-            const ideaText = document.getElementById('idea-text');
-
-            generateBtn.disabled = true;
-            ideaContainer.classList.add('hidden');
-            loader.classList.remove('hidden');
-
-            // Prompt atualizado para gerar ideias de jogos para uma game jam
-            const prompt = `Gere um conceito de jogo criativo, simples e interessante, ideal para ser desenvolvido em uma game jam de 48 horas. Descreva o gênero, a mecânica principal e um diferencial que o torne interessante, tudo em um único parágrafo. Responda em português.`;
-
-            const apiKey = ""; // A chave da API será injetada pelo ambiente
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
-
-            const payload = {
-                contents: [{
-                    parts: [{ text: prompt }]
-                }]
-            };
-
-            try {
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                if (!response.ok) {
-                    throw new Error(`Erro na API: ${response.statusText}`);
-                }
-
-                const result = await response.json();
-                
-                if (result.candidates && result.candidates.length > 0 && result.candidates[0].content.parts[0].text) {
-                    const generatedText = result.candidates[0].content.parts[0].text;
-                    ideaText.textContent = generatedText;
-                    ideaContainer.classList.remove('hidden');
-                } else {
-                    ideaText.textContent = "Não foi possível gerar uma ideia no momento. Tente novamente mais tarde.";
-                    ideaContainer.classList.remove('hidden');
-                }
-
-            } catch (error) {
-                console.error("Erro ao chamar a Gemini API:", error);
-                ideaText.textContent = "Ocorreu um erro de comunicação com a IA. Verifique o console para mais detalhes.";
-                ideaContainer.classList.remove('hidden');
-            } finally {
-                loader.classList.add('hidden');
-                generateBtn.disabled = false;
-            }
-        }
         
         // --- LÓGICA PARA O FUNDO 3D COM THREE.JS ---
         
@@ -440,8 +324,6 @@
         document.addEventListener('DOMContentLoaded', () => {
             populateContent();
             init3D();
-            // Adiciona o evento de clique ao botão da Gemini
-            document.getElementById('generate-idea-btn').addEventListener('click', generateGameIdea);
         });
 
     </script>
